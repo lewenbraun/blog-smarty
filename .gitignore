@@ -1,0 +1,10 @@
+/.env
+/.php-cs-fixer.cache
+/.idea/
+/.vscode/
+/storage/*
+!/storage/.gitignore
+/vendor/
+
+*.log
+.DS_Store
