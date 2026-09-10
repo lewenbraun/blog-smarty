@@ -7,7 +7,6 @@ parameters:
     paths:
         - public
         - src
-        - tests
     tmpDir: storage/cache/phpstan
     checkUninitializedProperties: true
     reportPossiblyNonexistentGeneralArrayOffset: true

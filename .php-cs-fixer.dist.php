@@ -5,12 +5,17 @@ declare(strict_types=1);
 use PhpCsFixer\Config;
 use PhpCsFixer\Finder;
 
-$finder = Finder::create()
-    ->in([
+$sourceDirectories = array_filter(
+    [
         __DIR__ . '/public',
         __DIR__ . '/src',
         __DIR__ . '/tests',
-    ])
+    ],
+    static fn(string $directory): bool => is_dir($directory),
+);
+
+$finder = Finder::create()
+    ->in($sourceDirectories)
     ->append([
         __FILE__,
     ]);

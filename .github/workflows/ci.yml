@@ -70,6 +70,7 @@ jobs:
         run: composer analyse
 
       - name: Run tests
+        if: ${{ hashFiles('tests/**/*.php') != '' }}
         env:
           APP_ENV: testing
           DB_HOST: 127.0.0.1
