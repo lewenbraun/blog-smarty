@@ -7,7 +7,10 @@
     "require": {
         "php": "^8.5",
         "ext-pdo": "*",
-        "smarty/smarty": "^5.8"
+        "doctrine/migrations": "^3.9",
+        "doctrine/orm": "^3.7",
+        "smarty/smarty": "^5.8",
+        "symfony/cache": "^8.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
@@ -16,6 +19,7 @@
         "pestphp/pest-plugin-arch": "^5.0",
         "pestphp/pest-plugin-phpstan": "^5.0",
         "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-doctrine": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0"
     },
     "autoload": {
