@@ -6,6 +6,9 @@ includes:
 parameters:
     level: 10
     paths:
+        - cli-config.php
+        - config
+        - database/migrations
         - public
         - src
     tmpDir: storage/cache/phpstan

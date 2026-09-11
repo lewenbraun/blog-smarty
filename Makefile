@@ -12,3 +12,6 @@ restart:
 
 logs:
 	docker compose logs -f
+
+db-migrate:
+	docker compose exec app php vendor/bin/doctrine-migrations migrate --no-interaction
