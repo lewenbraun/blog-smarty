@@ -11,7 +11,7 @@ $sourceDirectories = array_filter(
         __DIR__ . '/src',
         __DIR__ . '/tests',
         __DIR__ . '/config',
-        __DIR__ . '/database/migrations',
+        __DIR__ . '/database',
     ],
     static fn(string $directory): bool => is_dir($directory),
 );

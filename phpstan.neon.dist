@@ -8,7 +8,7 @@ parameters:
     paths:
         - cli-config.php
         - config
-        - database/migrations
+        - database
         - public
         - src
     tmpDir: storage/cache/phpstan
