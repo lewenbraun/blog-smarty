@@ -10,6 +10,8 @@ $sourceDirectories = array_filter(
         __DIR__ . '/public',
         __DIR__ . '/src',
         __DIR__ . '/tests',
+        __DIR__ . '/config',
+        __DIR__ . '/database',
     ],
     static fn(string $directory): bool => is_dir($directory),
 );
@@ -18,6 +20,7 @@ $finder = Finder::create()
     ->in($sourceDirectories)
     ->append([
         __FILE__,
+        __DIR__ . '/cli-config.php',
     ]);
 
 return new Config()
