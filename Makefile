@@ -1,6 +1,9 @@
 build:
 	docker compose build
 
+css:
+	sass --style=expanded --no-source-map assets/scss/main.scss public/assets/css/main.css
+
 up:
 	docker compose up -d
 
