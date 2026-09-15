@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{block name='title'}Blog Smarty{/block}</title>
-  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/main.css?v=f4f8f4">
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
@@ -12,10 +12,6 @@
   <header class="site-header">
     <div class="container site-header__inner">
       <a class="site-logo" href="/">Blog Smarty</a>
-
-      <nav class="site-nav" aria-label="Main navigation">
-        <a class="site-nav__link" href="/">Home</a>
-      </nav>
     </div>
   </header>
 
