@@ -13,14 +13,13 @@
         "symfony/cache": "^8.1"
     },
     "require-dev": {
+        "ext-pdo_sqlite": "*",
         "fakerphp/faker": "^1.24",
         "friendsofphp/php-cs-fixer": "^3.95",
-        "pestphp/pest": "^5.0",
-        "pestphp/pest-plugin-arch": "^5.0",
-        "pestphp/pest-plugin-phpstan": "^5.0",
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-doctrine": "^2.0",
-        "phpstan/phpstan-strict-rules": "^2.0"
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "phpunit/phpunit": "^13.3"
     },
     "autoload": {
         "psr-4": {
@@ -36,9 +35,9 @@
         "analyse": "phpstan analyse --memory-limit=512M",
         "lint": "php-cs-fixer check --diff --verbose",
         "lint:fix": "php-cs-fixer fix --verbose",
-        "test": "pest",
-        "test:unit": "pest --testsuite=Unit",
-        "test:integration": "pest --testsuite=Integration",
+        "test": "phpunit",
+        "test:unit": "phpunit --testsuite=Unit",
+        "test:integration": "phpunit --testsuite=Integration",
         "quality": [
             "composer validate --strict",
             "@lint",
@@ -47,9 +46,6 @@
         ]
     },
     "config": {
-        "allow-plugins": {
-            "pestphp/pest-plugin": true
-        },
         "optimize-autoloader": true,
         "preferred-install": "dist",
         "sort-packages": true
