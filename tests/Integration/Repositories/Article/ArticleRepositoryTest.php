@@ -74,15 +74,96 @@ final class ArticleRepositoryTest extends IntegrationTestCase
         );
     }
 
-    private function createArticle(string $articleSlug, int $articleViews = 0): Article
+    public function testItFindsLatestArticlesOnlyInRequestedCategory(): void
     {
+        $entityManager = $this->entityManager();
+        $category = new Category('Technology', 'technology', 'Technology articles.');
+        $otherCategory = new Category('Business', 'business', 'Business articles.');
+        $oldestArticle = $this->createArticle('oldest-article', 900, '2026-09-10 10:00:00');
+        $sameDateArticle = $this->createArticle('same-date-article', 10, '2026-09-13 10:00:00');
+        $latestArticle = $this->createArticle('latest-article', 0, '2026-09-13 10:00:00');
+        $middleArticle = $this->createArticle('middle-article', 300, '2026-09-12 10:00:00');
+        $unrelatedArticle = $this->createArticle('unrelated-article', 1000, '2026-09-15 10:00:00');
+
+        $entityManager->persist($category);
+        $entityManager->persist($otherCategory);
+
+        foreach ([$oldestArticle, $sameDateArticle, $latestArticle, $middleArticle, $unrelatedArticle] as $article) {
+            $entityManager->persist($article);
+        }
+
+        $entityManager->flush();
+
+        foreach ([$oldestArticle, $sameDateArticle, $latestArticle, $middleArticle] as $article) {
+            $this->linkArticleToCategory($article, $category);
+        }
+
+        $this->linkArticleToCategory($latestArticle, $otherCategory);
+        $this->linkArticleToCategory($unrelatedArticle, $otherCategory);
+        $categoryId = $category->getId();
+        self::assertNotNull($categoryId);
+        $entityManager->clear();
+        $storedCategory = $entityManager->find(Category::class, $categoryId);
+        self::assertInstanceOf(Category::class, $storedCategory);
+
+        $articleRepository = new ArticleRepository($entityManager);
+        $latestArticles = $articleRepository->findLatestArticlesByCategory($storedCategory, 3);
+
+        self::assertSame(
+            ['latest-article', 'same-date-article', 'middle-article'],
+            array_map(
+                static fn(Article $article): string => $article->getSlug(),
+                $latestArticles,
+            ),
+        );
+
+        self::assertSame(
+            ['latest-article', 'same-date-article'],
+            array_map(
+                static fn(Article $article): string => $article->getSlug(),
+                $articleRepository->findLatestArticlesByCategory($storedCategory, 2),
+            ),
+        );
+    }
+
+    public function testItReturnsNoLatestArticlesForEmptyCategory(): void
+    {
+        $entityManager = $this->entityManager();
+        $category = new Category('Technology', 'technology', 'Technology articles.');
+        $entityManager->persist($category);
+        $entityManager->flush();
+
+        $articleRepository = new ArticleRepository($entityManager);
+
+        self::assertSame([], $articleRepository->findLatestArticlesByCategory($category, 3));
+    }
+
+    private function linkArticleToCategory(Article $article, Category $category): void
+    {
+        $articleId = $article->getId();
+        $categoryId = $category->getId();
+
+        self::assertNotNull($articleId);
+        self::assertNotNull($categoryId);
+
+        $this->entityManager()->getConnection()->insert('article_category', [
+            'article_id' => $articleId,
+            'category_id' => $categoryId,
+        ]);
+    }
+
+    private function createArticle(
+        string $articleSlug,
+        int $articleViews = 0,
+        string $publishedAt = '2026-09-14 10:00:00',
+    ): Article {
         return new Article(
             imageUrl: 'https://example.com/article.webp',
             title: 'Test article',
             slug: $articleSlug,
             description: 'Test description',
             content: 'Test content',
-            publishedAt: new DateTimeImmutable('2026-09-14 10:00:00'),
+            publishedAt: new DateTimeImmutable($publishedAt),
             views: $articleViews,
         );
     }

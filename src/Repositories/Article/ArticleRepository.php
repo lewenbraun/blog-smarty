@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories\Article;
 
 use App\Models\Article;
+use App\Models\Category;
 use App\Repositories\Article\Contracts\ArticleRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
@@ -59,6 +60,32 @@ final readonly class ArticleRepository implements ArticleRepositoryInterface
             articleCategoryIds: $articleCategoryIds,
             limit: $limit,
         );
+    }
+
+    /**
+     * @param positive-int $limit
+     *
+     * @return list<Article>
+     */
+    public function findLatestArticlesByCategory(Category $category, int $limit): array
+    {
+        $categoryId = $this->getCategoryIdOrFail($category);
+
+        /** @var list<Article> $latestArticles */
+        $latestArticles = $this->entityManager
+            ->createQueryBuilder()
+            ->select('article')
+            ->from(Article::class, 'article')
+            ->innerJoin('article.categories', 'category')
+            ->where('category.id = :categoryId')
+            ->setParameter('categoryId', $categoryId)
+            ->orderBy('article.publishedAt', 'DESC')
+            ->addOrderBy('article.id', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        return $latestArticles;
     }
 
     /** @return list<int> */
@@ -120,5 +147,16 @@ final readonly class ArticleRepository implements ArticleRepositoryInterface
         }
 
         return $articleId;
+    }
+
+    private function getCategoryIdOrFail(Category $category): int
+    {
+        $categoryId = $category->getId();
+
+        if ($categoryId === null) {
+            throw new LogicException('A persisted category must have an ID.');
+        }
+
+        return $categoryId;
     }
 }
