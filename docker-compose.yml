@@ -7,7 +7,6 @@ services:
       dockerfile: .docker/php/Dockerfile
     restart: unless-stopped
     working_dir: /var/www
-    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
     environment:
       APP_ENV: ${APP_ENV:-development}
       DB_HOST: db
@@ -17,6 +16,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-secret}
     volumes:
       - .:/var/www
+      - app_cache:/var/www/storage/cache
     depends_on:
       db:
         condition: service_healthy
@@ -53,3 +53,4 @@ services:
 
 volumes:
   mysql_data:
+  app_cache:

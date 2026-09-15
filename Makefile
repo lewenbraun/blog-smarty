@@ -1,6 +1,9 @@
 build:
 	docker compose build
 
+composer:
+	docker compose exec app composer install
+
 css:
 	sass --style=expanded --no-source-map assets/scss/main.scss public/assets/css/main.css
 
