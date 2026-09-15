@@ -1,5 +1,4 @@
 includes:
-    - vendor/pestphp/pest-plugin-phpstan/extension.neon
     - vendor/phpstan/phpstan-doctrine/extension.neon
     - vendor/phpstan/phpstan-strict-rules/rules.neon
 
@@ -11,6 +10,7 @@ parameters:
         - database
         - public
         - src
+        - tests
     tmpDir: storage/cache/phpstan
     checkUninitializedProperties: true
     reportPossiblyNonexistentGeneralArrayOffset: true
