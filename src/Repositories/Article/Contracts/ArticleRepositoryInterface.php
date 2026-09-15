@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Repositories\Article\Contracts;
 
+use App\Enums\ArticleSortEnum;
+use App\Enums\SortDirectionEnum;
 use App\Models\Article;
 use App\Models\Category;
 
@@ -26,4 +28,20 @@ interface ArticleRepositoryInterface
      * @return list<Article>
      */
     public function findLatestArticlesByCategory(Category $category, int $limit): array;
+
+    public function countArticlesByCategory(Category $category): int;
+
+    /**
+     * @param positive-int $limit
+     * @param non-negative-int $offset
+     *
+     * @return list<Article>
+     */
+    public function findArticlesByCategory(
+        Category $category,
+        ArticleSortEnum $sort,
+        SortDirectionEnum $direction,
+        int $limit,
+        int $offset,
+    ): array;
 }

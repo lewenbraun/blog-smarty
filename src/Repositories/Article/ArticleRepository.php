@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Repositories\Article;
 
+use App\Enums\ArticleSortEnum;
+use App\Enums\SortDirectionEnum;
 use App\Models\Article;
 use App\Models\Category;
 use App\Repositories\Article\Contracts\ArticleRepositoryInterface;
@@ -69,23 +71,70 @@ final readonly class ArticleRepository implements ArticleRepositoryInterface
      */
     public function findLatestArticlesByCategory(Category $category, int $limit): array
     {
+        $latestArticles = $this->findArticlesByCategory(
+            category: $category,
+            sort: ArticleSortEnum::Date,
+            direction: SortDirectionEnum::Desc,
+            limit: $limit,
+            offset: 0,
+        );
+
+        return $latestArticles;
+    }
+
+    public function countArticlesByCategory(Category $category): int
+    {
         $categoryId = $this->getCategoryIdOrFail($category);
 
-        /** @var list<Article> $latestArticles */
-        $latestArticles = $this->entityManager
+        /** @var int|string $articleCount */
+        $articleCount = $this->entityManager
+            ->createQueryBuilder()
+            ->select('COUNT(article.id)')
+            ->from(Article::class, 'article')
+            ->innerJoin('article.categories', 'category')
+            ->where('category.id = :categoryId')
+            ->setParameter('categoryId', $categoryId)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return (int) $articleCount;
+    }
+
+    /**
+     * @param positive-int $limit
+     * @param non-negative-int $offset
+     *
+     * @return list<Article>
+     */
+    public function findArticlesByCategory(
+        Category $category,
+        ArticleSortEnum $sort,
+        SortDirectionEnum $direction,
+        int $limit,
+        int $offset,
+    ): array {
+        $categoryId = $this->getCategoryIdOrFail($category);
+        $sortField = match ($sort) {
+            ArticleSortEnum::Date => 'article.publishedAt',
+            ArticleSortEnum::Views => 'article.views',
+        };
+
+        /** @var list<Article> $articles */
+        $articles = $this->entityManager
             ->createQueryBuilder()
             ->select('article')
             ->from(Article::class, 'article')
             ->innerJoin('article.categories', 'category')
             ->where('category.id = :categoryId')
             ->setParameter('categoryId', $categoryId)
-            ->orderBy('article.publishedAt', 'DESC')
-            ->addOrderBy('article.id', 'DESC')
+            ->orderBy($sortField, $direction->value)
+            ->addOrderBy('article.id', $direction->value)
             ->setMaxResults($limit)
+            ->setFirstResult($offset)
             ->getQuery()
             ->getResult();
 
-        return $latestArticles;
+        return $articles;
     }
 
     /** @return list<int> */
