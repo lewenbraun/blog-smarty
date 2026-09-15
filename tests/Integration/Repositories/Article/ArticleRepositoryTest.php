@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Integration\Repositories\Article;
 
+use App\Enums\ArticleSortEnum;
+use App\Enums\SortDirectionEnum;
 use App\Models\Article;
 use App\Models\Category;
 use App\Repositories\Article\ArticleRepository;
@@ -136,6 +138,59 @@ final class ArticleRepositoryTest extends IntegrationTestCase
         $articleRepository = new ArticleRepository($entityManager);
 
         self::assertSame([], $articleRepository->findLatestArticlesByCategory($category, 3));
+    }
+
+    public function testItSortsAndPaginatesCategoryArticlesByViews(): void
+    {
+        $entityManager = $this->entityManager();
+        $category = new Category('Technology', 'technology', 'Technology articles.');
+        $otherCategory = new Category('Business', 'business', 'Business articles.');
+        $middleArticle = $this->createArticle('middle-article', 20);
+        $leastViewedArticle = $this->createArticle('least-viewed-article', 5);
+        $mostViewedArticle = $this->createArticle('most-viewed-article', 90);
+        $unrelatedArticle = $this->createArticle('unrelated-article', 1000);
+
+        $entityManager->persist($category);
+        $entityManager->persist($otherCategory);
+
+        foreach ([$middleArticle, $leastViewedArticle, $mostViewedArticle, $unrelatedArticle] as $article) {
+            $entityManager->persist($article);
+        }
+
+        $entityManager->flush();
+
+        foreach ([$middleArticle, $leastViewedArticle, $mostViewedArticle] as $article) {
+            $this->linkArticleToCategory($article, $category);
+        }
+
+        $this->linkArticleToCategory($mostViewedArticle, $otherCategory);
+        $this->linkArticleToCategory($unrelatedArticle, $otherCategory);
+
+        $articleRepository = new ArticleRepository($entityManager);
+        $mostViewedArticles = $articleRepository->findArticlesByCategory(
+            $category,
+            ArticleSortEnum::Views,
+            SortDirectionEnum::Desc,
+            2,
+            0,
+        );
+        $nextArticles = $articleRepository->findArticlesByCategory(
+            $category,
+            ArticleSortEnum::Views,
+            SortDirectionEnum::Asc,
+            2,
+            1,
+        );
+
+        self::assertSame(3, $articleRepository->countArticlesByCategory($category));
+        self::assertSame(
+            ['most-viewed-article', 'middle-article'],
+            array_map(static fn(Article $article): string => $article->getSlug(), $mostViewedArticles),
+        );
+        self::assertSame(
+            ['middle-article', 'most-viewed-article'],
+            array_map(static fn(Article $article): string => $article->getSlug(), $nextArticles),
+        );
     }
 
     private function linkArticleToCategory(Article $article, Category $category): void

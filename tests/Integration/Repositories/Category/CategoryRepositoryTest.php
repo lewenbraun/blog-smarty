@@ -12,6 +12,23 @@ use Tests\IntegrationTestCase;
 
 final class CategoryRepositoryTest extends IntegrationTestCase
 {
+    public function testItFindsCategoryBySlug(): void
+    {
+        $entityManager = $this->entityManager();
+        $category = new Category('Technology', 'technology', 'Technology articles.');
+        $entityManager->persist($category);
+        $entityManager->flush();
+        $entityManager->clear();
+
+        $categoryRepository = new CategoryRepository($entityManager);
+        $storedCategory = $categoryRepository->findCategoryBySlug('technology');
+
+        self::assertInstanceOf(Category::class, $storedCategory);
+        self::assertSame('Technology', $storedCategory->getName());
+        self::assertSame('Technology articles.', $storedCategory->getDescription());
+        self::assertNull($categoryRepository->findCategoryBySlug('missing-category'));
+    }
+
     public function testItFindsOnlyCategoriesWithArticlesWithoutDuplicates(): void
     {
         $entityManager = $this->entityManager();
