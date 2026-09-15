@@ -8,6 +8,8 @@ use App\Models\Category;
 
 interface CategoryRepositoryInterface
 {
+    public function findCategoryBySlug(string $categorySlug): ?Category;
+
     /** @return list<Category> */
     public function findCategoriesWithArticles(): array;
 }

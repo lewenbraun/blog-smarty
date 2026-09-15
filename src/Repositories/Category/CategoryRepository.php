@@ -15,6 +15,15 @@ final readonly class CategoryRepository implements CategoryRepositoryInterface
         private EntityManagerInterface $entityManager,
     ) {}
 
+    public function findCategoryBySlug(string $categorySlug): ?Category
+    {
+        $category = $this->entityManager
+            ->getRepository(Category::class)
+            ->findOneBy(['slug' => $categorySlug]);
+
+        return $category;
+    }
+
     /** @return list<Category> */
     public function findCategoriesWithArticles(): array
     {

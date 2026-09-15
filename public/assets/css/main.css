@@ -329,6 +329,7 @@ a:focus-visible {
 .view-count__icon {
   width: 16px;
   height: 16px;
+  transform: translateY(-1px);
   fill: none;
   stroke: currentcolor;
   stroke-linecap: round;
@@ -405,4 +406,117 @@ a:focus-visible {
   padding: 96px 0;
   color: var(--color-muted);
   text-align: center;
+}
+
+.category-page {
+  padding: 32px 0;
+  background: var(--color-surface);
+}
+@media (min-width: 768px) {
+  .category-page {
+    padding: 48px 0;
+  }
+}
+
+.category-page__header {
+  max-width: 720px;
+  margin-bottom: 24px;
+}
+
+.category-page__title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 2.5rem;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+@media (min-width: 768px) {
+  .category-page__title {
+    font-size: 4rem;
+  }
+}
+
+.category-page__description {
+  margin: 16px 0 0;
+  color: var(--color-muted);
+  font-size: 1.1rem;
+  overflow-wrap: anywhere;
+}
+
+.category-sort {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.category-sort__label {
+  color: var(--color-muted);
+}
+
+.category-sort__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-accent-dark);
+}
+.category-sort__link:hover {
+  color: var(--color-text);
+}
+
+.category-sort__link--active {
+  font-weight: 600;
+}
+
+.category-sort__arrow {
+  font-size: 0.6em;
+  transform: translateY(1px);
+}
+
+.category-page__empty {
+  grid-column: 1/-1;
+  margin: 0;
+  padding: 32px 0;
+  color: var(--color-muted);
+}
+
+.category-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
+}
+
+.category-pagination__link {
+  padding: 8px;
+  color: var(--color-accent-dark);
+  font-weight: 600;
+}
+
+.category-pagination__disabled {
+  padding: 8px;
+  color: var(--color-muted);
+}
+
+.category-pagination__pages {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.category-pagination__number {
+  min-width: 32px;
+  padding: 8px;
+  text-align: center;
+}
+
+.category-pagination__number--current {
+  color: var(--color-text);
+  font-weight: 800;
 }
