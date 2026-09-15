@@ -11,6 +11,12 @@ use App\Http\Controllers\HomeController;
 return [
     [
         'method' => 'GET',
+        'pattern' => '#^/$#',
+        'controller' => $homeController,
+        'action' => 'index',
+    ],
+    [
+        'method' => 'GET',
         'pattern' => '#^/articles/([^/]+)/?$#',
         'controller' => $articleController,
         'action' => 'show',

@@ -6,7 +6,9 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\HomeController;
 use App\Http\Router;
 use App\Repositories\Article\ArticleRepository;
+use App\Repositories\Category\CategoryRepository;
 use App\Services\Article\ArticleService;
+use App\Services\Home\HomeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Smarty\Smarty;
 
@@ -27,10 +29,12 @@ if (!$entityManager instanceof EntityManagerInterface) {
     throw new LogicException('Doctrine configuration must return an entity manager.');
 }
 
-$homeController = new HomeController($smarty);
 $articleRepository = new ArticleRepository($entityManager);
 $articleService = new ArticleService($articleRepository);
 $articleController = new ArticleController($smarty, $articleService);
+$categoryRepository = new CategoryRepository($entityManager);
+$homeService = new HomeService($categoryRepository, $articleRepository);
+$homeController = new HomeController($smarty, $homeService);
 
 /**
  * @var list<array{

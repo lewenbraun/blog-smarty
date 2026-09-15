@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repositories\Article\Contracts;
 
 use App\Models\Article;
+use App\Models\Category;
 
 interface ArticleRepositoryInterface
 {
@@ -18,4 +19,11 @@ interface ArticleRepositoryInterface
      * @return list<Article>
      */
     public function findSimilarArticles(Article $article, int $limit): array;
+
+    /**
+     * @param positive-int $limit
+     *
+     * @return list<Article>
+     */
+    public function findLatestArticlesByCategory(Category $category, int $limit): array;
 }
